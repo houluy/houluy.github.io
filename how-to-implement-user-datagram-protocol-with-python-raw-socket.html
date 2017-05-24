@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="utf-8" />
+        <title>How to implement User Datagram Protocol with Python RAW socket</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+
+        <!--[if IE]>
+            <script src="https://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">LuCima's SpaCe </a></h1>
+                <nav><ul>
+                    <li><a href="/category/games.html">Games</a></li>
+                    <li class="active"><a href="/category/python-notes.html">Python-NOTes</a></li>
+                    <li><a href="/category/security.html">Security</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/how-to-implement-user-datagram-protocol-with-python-raw-socket.html" rel="bookmark"
+           title="Permalink to How to implement User Datagram Protocol with Python RAW socket">How to implement User Datagram Protocol with Python RAW socket</a></h1>
+    </header>
+
+    <div class="entry-content">
+<footer class="post-info">
+        <abbr class="published" title="2016-12-20T00:00:00+08:00">
+                Published: 二 20 十二月 2016
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="/author/houlu.html">Houlu</a>
+        </address>
+<p>In <a href="/category/python-notes.html">Python-NOTes</a>.</p>
+
+</footer><!-- /.post-info -->      <p>one’s complement in UDP  </p>
+<ol>
+<li>Construct the UDP header and UDP Pseudo header, as illustrated below, where Checksum is set zero at first.  </li>
+<li>Check the length of data, if it is an odd length of bytes, supplement a byte of zero (0x00) at the end of the data when counting checksum (This is important, not on the real data).  </li>
+<li>Form the sequence of bytes in the order: Pseudo header->UDP header->data.  </li>
+<li>Loop through the sequence and pull out two bytes each time (It is an even sequence because of the supplement), left shift the first byte for eight bits, then add the second byte. As a consequence, they become a 2-byte-long number.  </li>
+<li>Sum these 2-byte-long numbers. Add also the carries if there’s any of them. Make sure checksum stays 2-byte-long.  </li>
+<li>At the end of the loop, invert all the bits of the checksum, and take the last 16 bits as the final checksum.  </li>
+</ol>
+<p>UDP Field:  </p>
+<div class="highlight"><pre><span></span> 0      7 8     15 16    23 24    31
++--------+--------+--------+--------+
+|      Source     |   Destination   |
+|       Port      |       Port      |
++--------+--------+--------+--------+
+|      Length     |     Checksum    |
++--------+--------+--------+--------+
+|
+|        data octets ...
++--------------- ...
+</pre></div>
+
+
+<p>UDP Pseudo Header  </p>
+<div class="highlight"><pre><span></span> 0      7 8     15 16    23 24    31
++--------+--------+--------+--------+
+|           source address          |
++--------+--------+--------+--------+
+|        destination address        |
++--------+--------+--------+--------+
+|  zero  |protocol|    UDP length   | 
++--------+--------+--------+--------+
+</pre></div>
+
+
+<p>IP Header  </p>
+<div class="highlight"><pre><span></span> 0      7 8     15 16    23 24    31
++--------+--------+--------+--------+
+|Ver.|IHL|DSCP|ECN|   Total length  |
++--------+--------+--------+--------+
+|  Identification |Flags|   Offset  |
++--------+--------+--------+--------+
+|   TTL  |Protocol| Header Checksum |
++--------+--------+--------+--------+
+|         Source IP address         |
++--------+--------+--------+--------+
+|       Destination IP address      |
++--------+--------+--------+--------+
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">checksum_func</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="n">checksum</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">data_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">data_len</span><span class="o">%</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">data_len</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">data</span> <span class="o">+=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;!B&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">checksum</span> <span class="o">+=</span> <span class="n">w</span>
+
+    <span class="n">checksum</span> <span class="o">=</span> <span class="p">(</span><span class="n">checksum</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">checksum</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span><span class="p">)</span>
+    <span class="n">checksum</span> <span class="o">=</span> <span class="o">~</span><span class="n">checksum</span><span class="o">&amp;</span><span class="mh">0xFFFF</span>
+    <span class="k">return</span> <span class="n">checksum</span>
+</pre></div>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+                <div class="blogroll">
+                        <h2>links</h2>
+                        <ul>
+                            <li><a href="http://getpelican.com/">Pelican</a></li>
+                            <li><a href="http://python.org/">Python.org</a></li>
+                            <li><a href="http://jinja.pocoo.org/">Jinja2</a></li>
+                            <li><a href="http://blog.insanecoder.top/">S. Zhao</a></li>
+                        </ul>
+                </div><!-- /.blogroll -->
+                <div class="social">
+                        <h2>social</h2>
+                        <ul>
+
+                            <li><a href="https://github.com/houluy">github</a></li>
+                            <li><a href="http://stackoverflow.com/users/6818280/lucima">Stackoverflow</a></li>
+                            <li><a href="mailto:houlu8674@bupt.edu.cn">Email</a></li>
+                        </ul>
+                </div><!-- /.social -->
+        </section><!-- /#extras -->
+
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                Proudly powered by <a href="http://getpelican.com/">Pelican</a>, which takes great advantage of <a href="http://python.org">Python</a>.
+                </address><!-- /#about -->
+
+                <p>The theme is by <a href="http://coding.smashingmagazine.com/2009/08/04/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a>, thanks!</p>
+        </footer><!-- /#contentinfo -->
+
+</body>
+</html>

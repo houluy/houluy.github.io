@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>A Pelican Blog - Python-NOTes</title><link href="/" rel="alternate"></link><link href="/feeds/python-notes.atom.xml" rel="self"></link><id>/</id><updated>2017-01-17T00:00:00+00:00</updated><entry><title>Cerberus: Triple-head hound of Hades</title><link href="/cerberus-triple-head-hound-of-hades.html" rel="alternate"></link><published>2017-01-17T00:00:00+00:00</published><updated>2017-01-17T00:00:00+00:00</updated><author><name></name></author><id>tag:None,2017-01-17:/cerberus-triple-head-hound-of-hades.html</id><summary type="html">&lt;p&gt;rules_set_registry: only stores schema itself, for example &lt;code&gt;{'type': 'string', 'required': True}&lt;/code&gt;&lt;br&gt;
+schema_registry: stores complete schema, for example &lt;code&gt;{'name': {'type': 'string', 'required': True}}&lt;/code&gt;, it can be used directly.  &lt;/p&gt;
+&lt;p&gt;It's not easy to &lt;code&gt;allow_unknown&lt;/code&gt; for parent schema (for nested dict), because you cannot put &lt;code&gt;allow_unknown&lt;/code&gt; inside the defination of schema. You have …&lt;/p&gt;</summary><content type="html">&lt;p&gt;rules_set_registry: only stores schema itself, for example &lt;code&gt;{'type': 'string', 'required': True}&lt;/code&gt;&lt;br&gt;
+schema_registry: stores complete schema, for example &lt;code&gt;{'name': {'type': 'string', 'required': True}}&lt;/code&gt;, it can be used directly.  &lt;/p&gt;
+&lt;p&gt;It's not easy to &lt;code&gt;allow_unknown&lt;/code&gt; for parent schema (for nested dict), because you cannot put &lt;code&gt;allow_unknown&lt;/code&gt; inside the defination of schema. You have to 
+change the &lt;code&gt;allow_unknown&lt;/code&gt; attribute for the instance of Validator.  &lt;/p&gt;</content></entry><entry><title>On the BeGinNing</title><link href="/on-the-beginning.html" rel="alternate"></link><published>2016-12-23T00:00:00+00:00</published><updated>2016-12-23T00:00:00+00:00</updated><author><name></name></author><id>tag:None,2016-12-23:/on-the-beginning.html</id><summary type="html">&lt;p&gt;Welcome to visit 'python-NOTes' category in LuCima's SpaCe. Here gathers several posts summerized advanced usages, tips and black techs about Python. All contents are based on Python 3.x, though Python 2.x may be referred to shortly.  &lt;/p&gt;</summary><content type="html">&lt;p&gt;Welcome to visit 'python-NOTes' category in LuCima's SpaCe. Here gathers several posts summerized advanced usages, tips and black techs about Python. All contents are based on Python 3.x, though Python 2.x may be referred to shortly.  &lt;/p&gt;</content></entry><entry><title>Operaions on Basic data structure -- dict</title><link href="/operaions-on-basic-data-structure-dict.html" rel="alternate"></link><published>2016-12-23T00:00:00+00:00</published><updated>2016-12-23T00:00:00+00:00</updated><author><name></name></author><id>tag:None,2016-12-23:/operaions-on-basic-data-structure-dict.html</id><summary type="html">&lt;h1&gt;Series of posts (2)&lt;/h1&gt;
+&lt;p&gt;If you want to build up a dict using two lists, &lt;code&gt;zip()&lt;/code&gt; can be used as this:&lt;br&gt;
+&lt;code&gt;dict(zip(list_a, list_b))&lt;/code&gt;&lt;/p&gt;</summary><content type="html">&lt;h1&gt;Series of posts (2)&lt;/h1&gt;
+&lt;p&gt;If you want to build up a dict using two lists, &lt;code&gt;zip()&lt;/code&gt; can be used as this:&lt;br&gt;
+&lt;code&gt;dict(zip(list_a, list_b))&lt;/code&gt;&lt;/p&gt;</content></entry><entry><title>Operaions on Basic data structure -- list</title><link href="/operaions-on-basic-data-structure-list.html" rel="alternate"></link><published>2016-12-23T00:00:00+00:00</published><updated>2016-12-23T00:00:00+00:00</updated><author><name></name></author><id>tag:None,2016-12-23:/operaions-on-basic-data-structure-list.html</id><summary type="html">&lt;h1&gt;Series of posts (1)&lt;/h1&gt;
+&lt;p&gt;Here I am going to summarize some advancing operations about list, which is one of the most commonly used data structure in Python. Basic usage of list will be skipped.  &lt;/p&gt;</summary><content type="html">&lt;h1&gt;Series of posts (1)&lt;/h1&gt;
+&lt;p&gt;Here I am going to summarize some advancing operations about list, which is one of the most commonly used data structure in Python. Basic usage of list will be skipped.  &lt;/p&gt;</content></entry><entry><title>Operations on FILE and PATH</title><link href="/operations-on-file-and-path.html" rel="alternate"></link><published>2016-12-21T00:00:00+00:00</published><updated>2016-12-21T00:00:00+00:00</updated><author><name></name></author><id>tag:None,2016-12-21:/operations-on-file-and-path.html</id><summary type="html">&lt;p&gt;This post is going to introduce Python's' operations upon files and paths in OS. The most commonly used modules are &lt;code&gt;os&lt;/code&gt; and &lt;code&gt;shutil&lt;/code&gt;.&lt;/p&gt;</summary><content type="html">&lt;p&gt;This post is going to introduce Python's' operations upon files and paths in OS. The most commonly used modules are &lt;code&gt;os&lt;/code&gt; and &lt;code&gt;shutil&lt;/code&gt;.&lt;/p&gt;</content></entry><entry><title>How to implement User Datagram Protocol with Python RAW socket</title><link href="/how-to-implement-user-datagram-protocol-with-python-raw-socket.html" rel="alternate"></link><published>2016-12-20T00:00:00+00:00</published><updated>2016-12-20T00:00:00+00:00</updated><author><name></name></author><id>tag:None,2016-12-20:/how-to-implement-user-datagram-protocol-with-python-raw-socket.html</id><summary type="html">&lt;p&gt;one’s complement in UDP  &lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Construct the UDP header and UDP Pseudo header, as illustrated below, where Checksum is set zero at first.  &lt;/li&gt;
+&lt;li&gt;Check the length of data, if it is an odd length of bytes, supplement a byte of zero (0x00) at the end of the data when counting …&lt;/li&gt;&lt;/ol&gt;</summary><content type="html">&lt;p&gt;one’s complement in UDP  &lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Construct the UDP header and UDP Pseudo header, as illustrated below, where Checksum is set zero at first.  &lt;/li&gt;
+&lt;li&gt;Check the length of data, if it is an odd length of bytes, supplement a byte of zero (0x00) at the end of the data when counting checksum (This is important, not on the real data).  &lt;/li&gt;
+&lt;li&gt;Form the sequence of bytes in the order: Pseudo header-&gt;UDP header-&gt;data.  &lt;/li&gt;
+&lt;li&gt;Loop through the sequence and pull out two bytes each time (It is an even sequence because of the supplement), left shift the first byte for eight bits, then add the second byte. As a consequence, they become a 2-byte-long number.  &lt;/li&gt;
+&lt;li&gt;Sum these 2-byte-long numbers. Add also the carries if there’s any of them. Make sure checksum stays 2-byte-long.  &lt;/li&gt;
+&lt;li&gt;At the end of the loop, invert all the bits of the checksum, and take the last 16 bits as the final checksum.  &lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;UDP Field:  &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt; 0      7 8     15 16    23 24    31
++--------+--------+--------+--------+
+|      Source     |   Destination   |
+|       Port      |       Port      |
++--------+--------+--------+--------+
+|      Length     |     Checksum    |
++--------+--------+--------+--------+
+|
+|        data octets ...
++--------------- ...
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;UDP Pseudo Header  &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt; 0      7 8     15 16    23 24    31
++--------+--------+--------+--------+
+|           source address          |
++--------+--------+--------+--------+
+|        destination address        |
++--------+--------+--------+--------+
+|  zero  |protocol|    UDP length   | 
++--------+--------+--------+--------+
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;IP Header  &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt; 0      7 8     15 16    23 24    31
++--------+--------+--------+--------+
+|Ver.|IHL|DSCP|ECN|   Total length  |
++--------+--------+--------+--------+
+|  Identification |Flags|   Offset  |
++--------+--------+--------+--------+
+|   TTL  |Protocol| Header Checksum |
++--------+--------+--------+--------+
+|         Source IP address         |
++--------+--------+--------+--------+
+|       Destination IP address      |
++--------+--------+--------+--------+
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;checksum_func&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="n"&gt;checksum&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;
+    &lt;span class="n"&gt;data_len&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;data_len&lt;/span&gt;&lt;span class="o"&gt;%&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;data_len&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
+        &lt;span class="n"&gt;data&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="n"&gt;struct&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;pack&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;!B&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="n"&gt;w&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;8&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+        &lt;span class="n"&gt;checksum&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="n"&gt;w&lt;/span&gt;
+
+    &lt;span class="n"&gt;checksum&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;checksum&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;16&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;checksum&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="mh"&gt;0xFFFF&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;checksum&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;~&lt;/span&gt;&lt;span class="n"&gt;checksum&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="mh"&gt;0xFFFF&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;checksum&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;</content></entry><entry><title>One application of yield</title><link href="/one-application-of-yield.html" rel="alternate"></link><published>2016-12-18T00:00:00+00:00</published><updated>2016-12-18T00:00:00+00:00</updated><author><name></name></author><id>tag:None,2016-12-18:/one-application-of-yield.html</id><summary type="html">&lt;p&gt;When you want to generate an iterable letter list such as ['A', 'B', ..., 'J'], using &lt;code&gt;yield&lt;/code&gt; will be very graceful.&lt;br&gt;
+An example is listed below:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;letter_increment&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;letter&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;assert&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;letter&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nb"&gt;chr&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;ord&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;letter&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;iter_letter&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;start_letter&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;A&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;end_letter&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;J&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="n"&gt;current_letter&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;start_letter&lt;/span&gt;
+    &lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="n"&gt;current_letter&lt;/span&gt;
+        &lt;span class="k"&gt;if …&lt;/span&gt;&lt;/pre&gt;&lt;/div&gt;</summary><content type="html">&lt;p&gt;When you want to generate an iterable letter list such as ['A', 'B', ..., 'J'], using &lt;code&gt;yield&lt;/code&gt; will be very graceful.&lt;br&gt;
+An example is listed below:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;letter_increment&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;letter&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;assert&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;letter&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nb"&gt;chr&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;ord&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;letter&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;iter_letter&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;start_letter&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;A&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;end_letter&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;J&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="n"&gt;current_letter&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;start_letter&lt;/span&gt;
+    &lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="n"&gt;current_letter&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;current_letter&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;end_letter&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+            &lt;span class="k"&gt;raise&lt;/span&gt; &lt;span class="ne"&gt;StopIteration&lt;/span&gt;
+        &lt;span class="n"&gt;current_letter&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;letter_increment&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;current_letter&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;In this way, you can write:  &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;letter&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;iter_letter&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;A&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;J&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;letter&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Then you'll get results like this:  &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&amp;#39;A&amp;#39;  
+&amp;#39;B&amp;#39;  
+&amp;#39;C&amp;#39;  
+...  
+&amp;#39;J&amp;#39;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Also, you can implement an iterator class which is kind of heavy.&lt;/p&gt;
+&lt;p&gt;In the essence, the &lt;code&gt;for in&lt;/code&gt; statement in Python is the wrapper of an iterator. It generates an iterator and call the &lt;code&gt;next()&lt;/code&gt; method 
+in every loop. In the end, it also handles the &lt;code&gt;StopIteration&lt;/code&gt; exception automatically to stop the iteration.&lt;/p&gt;</content></entry></feed>

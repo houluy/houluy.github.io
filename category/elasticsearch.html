@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
         <meta charset="utf-8" />
-        <title>LuCima's SpaCe - Authors</title>
+        <title>LuCima's SpaCe - Elasticsearch</title>
         <link rel="stylesheet" href="https://houluy.github.io/theme/css/main.css" />
 
         <!--[if IE]>
@@ -14,20 +14,45 @@
         <header id="banner" class="body">
                 <h1><a href="https://houluy.github.io/">LuCima's SpaCe </a></h1>
                 <nav><ul>
-                    <li><a href="https://houluy.github.io/category/elasticsearch.html">Elasticsearch</a></li>
+                    <li class="active"><a href="https://houluy.github.io/category/elasticsearch.html">Elasticsearch</a></li>
                     <li><a href="https://houluy.github.io/category/games.html">Games</a></li>
                     <li><a href="https://houluy.github.io/category/python-notes.html">Python-NOTes</a></li>
                     <li><a href="https://houluy.github.io/category/security.html">Security</a></li>
                 </ul></nav>
         </header><!-- /#banner -->
 
-<section id="content" class="body">
-    <h1>Authors on LuCima's SpaCe</h1>
-    <ul>
-        <li><a href="https://houluy.github.io/author/houlu.html">Houlu</a> (10)</li>
-    </ul>
-</section>
+            <aside id="featured" class="body">
+                <article>
+                    <h1 class="entry-title"><a href="https://houluy.github.io/learning-elasticsearch-i.html">Learning Elasticsearch (i)</a></h1>
+<footer class="post-info">
+        <abbr class="published" title="2017-05-24T00:00:00+08:00">
+                Published: 三 24 五月 2017
+        </abbr>
 
+        <address class="vcard author">
+                By                         <a class="url fn" href="https://houluy.github.io/author/houlu.html">Houlu</a>
+        </address>
+<p>In <a href="https://houluy.github.io/category/elasticsearch.html">Elasticsearch</a>.</p>
+
+</footer><!-- /.post-info --><p>本文以Elasticsearch的Python（人生苦短）客户端为例，一起来感受Elasticsearch（Python）的强大之处。  </p>
+<p>基本操作：</p>
+<p><strong>增</strong>删查改</p>
+<p>增加一个文档: <code>es.create(index='index', doc_type='type', id=id, body=obj_doc)</code>，将会在索引'index'下的'type'类型中增加一个id为id的文档，内容为obj_doc。</p>
+<p>增<strong>删</strong>查改</p>
+<ol>
+<li>删除指定id的文档：<code>es.delete(index='index', doc_type='type', id=id)</code></li>
+<li>删除查询到的文档：<code>es.delete_by_query(index='index', doc_type='type', body=query_body)</code></li>
+</ol>
+<p>增删<strong>查</strong>改</p>
+<p>这里仅介绍通过id获取文档的方法：<code>es.get(index='index', doc_type='type', id=id)</code>
+关于复杂又强大的查询方式，将有相应篇幅介绍！</p>
+<p>增删查<strong>改</strong></p>
+<p>同删除接口类似，修改某个文档接口也分为指定id和查询修改两类：</p>
+<ol>
+<li>修改指定id的文档：<code>es.update(index='index', doc_type='type', id=id, body=update_body)</code></li>
+<li>修改查询到的文档：<code>es.update_by_query(index='index', doc_type='type', body=query_and_update_body)</code></li>
+</ol>                </article>
+            </aside><!-- /#featured -->
         <section id="extras" class="body">
                 <div class="blogroll">
                         <h2>links</h2>

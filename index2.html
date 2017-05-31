@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
         <meta charset="utf-8" />
-        <title>On the BeGinNing</title>
+        <title>LuCima's SpaCe</title>
         <link rel="stylesheet" href="https://houluy.github.io/theme/css/main.css" />
 
         <!--[if IE]>
@@ -19,22 +19,23 @@
                 <nav><ul>
                     <li><a href="https://houluy.github.io/category/elasticsearch.html">Elasticsearch</a></li>
                     <li><a href="https://houluy.github.io/category/games.html">Games</a></li>
-                    <li class="active"><a href="https://houluy.github.io/category/python-notes.html">Python-NOTes</a></li>
+                    <li><a href="https://houluy.github.io/category/python-notes.html">Python-NOTes</a></li>
                     <li><a href="https://houluy.github.io/category/security.html">Security</a></li>
                 </ul></nav>
         </header><!-- /#banner -->
-<section id="content" class="body">
-  <article>
-    <header>
-      <h1 class="entry-title">
-        <a href="https://houluy.github.io/on-the-beginning.html" rel="bookmark"
-           title="Permalink to On the BeGinNing">On the BeGinNing</a></h1>
-    </header>
 
-    <div class="entry-content">
+                <section id="content" class="body">
+                    <ol id="posts-list" class="hfeed" start="9">
+            <li><article class="hentry">
+                <header>
+                    <h1><a href="https://houluy.github.io/one-application-of-yield.html" rel="bookmark"
+                           title="Permalink to One application of yield">One application of yield</a></h1>
+                </header>
+
+                <div class="entry-content">
 <footer class="post-info">
-        <abbr class="published" title="2016-12-23T00:00:00+08:00">
-                Published: 五 23 十二月 2016
+        <abbr class="published" title="2016-12-18T00:00:00+08:00">
+                Published: 日 18 十二月 2016
         </abbr>
 
         <address class="vcard author">
@@ -42,11 +43,26 @@
         </address>
 <p>In <a href="https://houluy.github.io/category/python-notes.html">Python-NOTes</a>.</p>
 
-</footer><!-- /.post-info -->      <p>Welcome to visit 'python-NOTes' category in LuCima's SpaCe. Here gathers several posts summerized advanced usages, tips and black techs about Python. All contents are based on Python 3.x, though Python 2.x may be referred to shortly.  </p>
-    </div><!-- /.entry-content -->
+</footer><!-- /.post-info -->                <p>When you want to generate an iterable letter list such as ['A', 'B', ..., 'J'], using <code>yield</code> will be very graceful.<br>
+An example is listed below:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">letter_increment</span><span class="p">(</span><span class="n">letter</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">letter</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="nb">chr</span><span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="n">letter</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
 
-  </article>
-</section>
+<span class="k">def</span> <span class="nf">iter_letter</span><span class="p">(</span><span class="n">start_letter</span><span class="o">=</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="n">end_letter</span><span class="o">=</span><span class="s1">&#39;J&#39;</span><span class="p">):</span>
+    <span class="n">current_letter</span> <span class="o">=</span> <span class="n">start_letter</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">current_letter</span>
+        <span class="k">if …</span></pre></div>
+                <a class="readmore" href="https://houluy.github.io/one-application-of-yield.html">read more</a>
+                </div><!-- /.entry-content -->
+            </article></li>
+                </ol><!-- /#posts-list -->
+<p class="paginator">
+        <a href="https://houluy.github.io/index.html">&laquo;</a>
+    Page 2 / 2
+</p>
+                </section><!-- /#content -->
         <section id="extras" class="body">
                 <div class="blogroll">
                         <h2>links</h2>

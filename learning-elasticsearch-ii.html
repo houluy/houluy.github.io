@@ -33,8 +33,8 @@
 
     <div class="entry-content">
 <footer class="post-info">
-        <abbr class="published" title="2017-05-28T00:00:00+08:00">
-                Published: 日 28 五月 2017
+        <abbr class="published" title="2017-06-14T00:00:00+08:00">
+                Published: 三 14 六月 2017
         </abbr>
 
         <address class="vcard author">
@@ -42,8 +42,49 @@
         </address>
 <p>In <a href="https://houluy.github.io/category/elasticsearch.html">Elasticsearch</a>.</p>
 <p>tags: <a href="https://houluy.github.io/tag/elasticsearch.html">Elasticsearch</a> </p>
-</footer><!-- /.post-info -->      <h2>Elasticsearch Query语句</h2>
-<p>Query语句用于<code>search</code>接口搜索相应内容。</p>
+</footer><!-- /.post-info -->      <p>希望限制<code>search</code>接口返回的字段，通过在<code>query</code>属性中增加{ '_source': '*' }来做限制，或在SDK的search函数中增加参数:</p>
+<div class="highlight"><pre><span></span><span class="n">es</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">_source</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">])</span>
+</pre></div>
+
+
+<p>返回只包含字段'a'与'b'的值。</p>
+<h2>动态更新Elasticsearch部分配置</h2>
+<p>如果需要不停机更新Elasticsearch的配置，可以使用Elasticsearch的动态配置修改机制。在Python中，使用<code>ClusterClient</code>实例完成：  </p>
+<div class="highlight"><pre><span></span>
+</pre></div>
+
+
+<h2>Elasticsearch快照</h2>
+<p>当我们需要定期为数据做备份时，可以使用Elasticsearch提供的快照(snapshot)功能。要如此，我们需要先注册一个快照的仓库(repository).在Python SDK中，快照的操作由快照实例完成：  </p>
+<div class="highlight"><pre><span></span><span class="n">sc</span> <span class="o">=</span> <span class="n">elasticsearch</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">SnapshotClient</span><span class="p">(</span><span class="n">es</span><span class="p">)</span>
+<span class="c1">#Get a repo</span>
+<span class="n">repo</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">get_repository</span><span class="p">()</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">repo</span><span class="p">:</span>
+    <span class="c1">#Create a repo</span>
+    <span class="n">repo_settings</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;fs&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;settings&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;compress&#39;</span><span class="p">:</span> <span class="s1">&#39;true&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;/tmp/back&#39;</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">create_repository</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s1">&#39;repo_name&#39;</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">repo_settings</span><span class="p">)</span>
+</pre></div>
+
+
+<p>返回<code>{acknowlegement: True}</code>表示创建成功。注意：<code>location</code>属性所指定的位置必须在配置文件的<code>path.repo</code>列表中。例如：<code>path.repo: ['/tmp/back', '/root/back']</code>。
+<code>path.repo</code>属性不支持动态更新。</p>
+<p>之后，为指定的索引创建快照：</p>
+<div class="highlight"><pre><span></span><span class="n">snapshot_body</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;indices&#39;</span><span class="p">:</span> <span class="s1">&#39;_all&#39;</span><span class="p">,</span> <span class="c1">#indices that need backup</span>
+    <span class="s1">&#39;ignore_unavailable&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">sc</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s1">&#39;repo_name&#39;</span><span class="p">,</span> <span class="n">snapshot</span><span class="o">=</span><span class="s1">&#39;snap_name&#39;</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">snapshot_body</span><span class="p">,</span> <span class="n">wait_for_completion</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+
+
+<p><code>wait_for_completion=True</code>将等待快照完全创建结束后获取创建结果。  </p>
+<h3>快照恢复</h3>
     </div><!-- /.entry-content -->
 
   </article>

@@ -26,7 +26,73 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <h1 class="entry-title"><a href="https://houluy.github.io/learning-elasticsearch-i.html">Learning Elasticsearch (i)</a></h1>
+                    <h1 class="entry-title"><a href="https://houluy.github.io/learning-elasticsearch-ii.html">Learning Elasticsearch (ii)</a></h1>
+<footer class="post-info">
+        <abbr class="published" title="2017-06-14T00:00:00+08:00">
+                Published: 三 14 六月 2017
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="https://houluy.github.io/author/hou-lu.html">Hou, Lu</a>
+        </address>
+<p>In <a href="https://houluy.github.io/category/elasticsearch.html">Elasticsearch</a>.</p>
+<p>tags: <a href="https://houluy.github.io/tag/elasticsearch.html">Elasticsearch</a> </p>
+</footer><!-- /.post-info --><p>希望限制<code>search</code>接口返回的字段，通过在<code>query</code>属性中增加{ '_source': '*' }来做限制，或在SDK的search函数中增加参数:</p>
+<div class="highlight"><pre><span></span><span class="n">es</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">_source</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">])</span>
+</pre></div>
+
+
+<p>返回只包含字段'a'与'b'的值。</p>
+<h2>动态更新Elasticsearch部分配置</h2>
+<p>如果需要不停机更新Elasticsearch的配置，可以使用Elasticsearch的动态配置修改机制。在Python中，使用<code>ClusterClient</code>实例完成：  </p>
+<div class="highlight"><pre><span></span>
+</pre></div>
+
+
+<h2>Elasticsearch快照</h2>
+<p>当我们需要定期为数据做备份时，可以使用Elasticsearch提供的快照(snapshot)功能。要如此，我们需要先注册一个快照的仓库(repository).在Python SDK中，快照的操作由快照实例完成：  </p>
+<div class="highlight"><pre><span></span><span class="n">sc</span> <span class="o">=</span> <span class="n">elasticsearch</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">SnapshotClient</span><span class="p">(</span><span class="n">es</span><span class="p">)</span>
+<span class="c1">#Get a repo</span>
+<span class="n">repo</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">get_repository</span><span class="p">()</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">repo</span><span class="p">:</span>
+    <span class="c1">#Create a repo</span>
+    <span class="n">repo_settings</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;fs&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;settings&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;compress&#39;</span><span class="p">:</span> <span class="s1">&#39;true&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;/tmp/back&#39;</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+    <span class="n">sc</span><span class="o">.</span><span class="n">create_repository</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s1">&#39;repo_name&#39;</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">repo_settings</span><span class="p">)</span>
+</pre></div>
+
+
+<p>返回<code>{acknowlegement: True}</code>表示创建成功。注意：<code>location</code>属性所指定的位置必须在配置文件的<code>path.repo</code>列表中。例如：<code>path.repo: ['/tmp/back', '/root/back']</code>。
+<code>path.repo</code>属性不支持动态更新。</p>
+<p>之后，为指定的索引创建快照：</p>
+<div class="highlight"><pre><span></span><span class="n">snapshot_body</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;indices&#39;</span><span class="p">:</span> <span class="s1">&#39;_all&#39;</span><span class="p">,</span> <span class="c1">#indices that need backup</span>
+    <span class="s1">&#39;ignore_unavailable&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">sc</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s1">&#39;repo_name&#39;</span><span class="p">,</span> <span class="n">snapshot</span><span class="o">=</span><span class="s1">&#39;snap_name&#39;</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">snapshot_body</span><span class="p">,</span> <span class="n">wait_for_completion</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+
+
+<p><code>wait_for_completion=True</code>将等待快照完全创建结束后获取创建结果。  </p>
+<h3>快照恢复</h3>                </article>
+            </aside><!-- /#featured -->
+                <section id="content" class="body">
+                    <h1>Other articles</h1>
+                    <hr />
+                    <ol id="posts-list" class="hfeed">
+
+            <li><article class="hentry">
+                <header>
+                    <h1><a href="https://houluy.github.io/learning-elasticsearch-i.html" rel="bookmark"
+                           title="Permalink to Learning Elasticsearch (i)">Learning Elasticsearch (i)</a></h1>
+                </header>
+
+                <div class="entry-content">
 <footer class="post-info">
         <abbr class="published" title="2017-05-24T00:00:00+08:00">
                 Published: 三 24 五月 2017
@@ -37,121 +103,10 @@
         </address>
 <p>In <a href="https://houluy.github.io/category/elasticsearch.html">Elasticsearch</a>.</p>
 <p>tags: <a href="https://houluy.github.io/tag/elasticsearch.html">Elasticsearch</a> </p>
-</footer><!-- /.post-info --><p>本文以Elasticsearch的Python（人生苦短）客户端为例，一起来感受Elasticsearch（Python）的强大之处。<br>
-推荐Python版本：3.5</p>
-<p>官方文档：<a href="https://elasticsearch-py.readthedocs.io/en/master/">https://elasticsearch-py.readthedocs.io/en/master/</a></p>
-<h2>Elasticsearch Python Client安装</h2>
-<div class="highlight"><pre><span></span>pip install elasticsearch
-</pre></div>
-
-
-<h2>ik分词器</h2>
-<p>Elasticsearch内置多种类型分词器，但均不支持中文。因而本文选取ik分词器做为中文分词工具
-ik-analyzer: <a href="https://github.com/medcl/elasticsearch-analysis-ik">https://github.com/medcl/elasticsearch-analysis-ik</a></p>
-<h2>Client类</h2>
-<p>想要使用elasticsearch面向document的各个接口，需要先构建一个<code>Elastic</code>实例：</p>
-<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">elasticsearch</span>
-<span class="n">es</span> <span class="o">=</span> <span class="n">elasticsearch</span><span class="o">.</span><span class="n">Elastic</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">xxx</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">9200</span><span class="p">)</span>
-</pre></div>
-
-
-<p>该<code>es</code>用于使用面向document的接口。其他接口（如索引index相关接口）需要实例化<code>es</code>的一些子类。</p>
-<h2>es子类</h2>
-<p>为了操作Elasticsearch的索引，我们需要初始化一个es的子类实例:  </p>
-<div class="highlight"><pre><span></span><span class="n">indices</span> <span class="o">=</span> <span class="n">elasticsearch</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">IndicesClient</span><span class="p">(</span><span class="n">es</span><span class="p">)</span>
-</pre></div>
-
-
-<p>此后，我们可以使用<code>indices</code>进行索引级的各种操作  </p>
-<h2>建立index</h2>
-<p>利用<code>indices</code>实例可以建立新的索引：  </p>
-<div class="highlight"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">indices</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s1">&#39;school&#39;</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">ind_mappings</span><span class="p">)</span>
-</pre></div>
-
-
-<p><code>body</code>参数会在后续介绍。可以将<code>res</code>打印，查看是否建立成功。  </p>
-<h2>基本操作：</h2>
-<ul>
-<li>
-<p><strong>增</strong>删查改</p>
-<p>增加一个文档: <code>es.create(index='school', doc_type='teacher', id=id, body=obj_doc)</code>，将会在索引<code>school</code>下的<code>teacher</code>类型中增加一个<code>id</code>为id(整型)的文档，内容为<code>obj_doc</code>。</p>
-</li>
-<li>
-<p>增<strong>删</strong>查改</p>
-<ol>
-<li>删除指定id的文档：<code>es.delete(school='school', doc_type='teacher', id=id)</code></li>
-<li>删除查询到的文档：<code>es.delete_by_query(school='school', doc_type='teacher', body=query_body)</code></li>
-</ol>
-</li>
-<li>
-<p>增删<strong>查</strong>改</p>
-<p>这里仅介绍通过id获取文档的方法：<code>es.get(school='school', doc_type='teacher', id=id)</code><br>
-关于复杂又强大的查询方式，将有相应篇幅介绍！</p>
-</li>
-<li>
-<p>增删查<strong>改</strong><br>
-同删除接口类似，修改某个文档接口也分为指定id和查询修改两类：</p>
-<ol>
-<li>修改指定id的文档：<code>es.update(school='school', doc_type='teacher', id=id, body=update_body)</code></li>
-<li>修改查询到的文档：<code>es.update_by_query(school='school', doc_type='teacher', body=query_and_update_body)</code></li>
-</ol>
-</li>
-</ul>
-<h3>示例:</h3>
-<p>下面给出一个示例，数据生成程序位于<code>example</code>目录下的<code>generate_ex_data.py</code>文件。假设JSON数据存于文件<code>data.json</code>中：  </p>
-<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">elasticsearch</span>
-<span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
-
-<span class="c1">#Instantiation</span>
-<span class="n">es</span> <span class="o">=</span> <span class="n">elasticsearch</span><span class="o">.</span><span class="n">Elastic</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">)</span>
-<span class="n">indices</span> <span class="o">=</span> <span class="n">elasticsearch</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">IndicesClient</span><span class="p">(</span><span class="n">es</span><span class="p">)</span>
-
-<span class="c1">#create index</span>
-<span class="n">indices</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s1">&#39;school&#39;</span><span class="p">)</span>
-
-<span class="c1">#read JSON data from file</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;data.json&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">teachers</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-
-<span class="c1">#create documents</span>
-<span class="k">for</span> <span class="n">ind</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">teachers</span><span class="p">):</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s1">&#39;school&#39;</span><span class="p">,</span> <span class="n">doc_type</span><span class="o">=</span><span class="s1">&#39;teacher&#39;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">ind</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">val</span><span class="p">)</span>
-    <span class="k">except</span><span class="p">:</span>
-        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Create No. {} doc ERROR!&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ind</span><span class="p">))</span>
-</pre></div>
-
-
-<p>尝试<code>get</code>一个文档：</p>
-<div class="highlight"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s1">&#39;school&#39;</span><span class="p">,</span> <span class="n">doc_type</span><span class="o">=</span><span class="s1">&#39;teacher&#39;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-<span class="n">pprint</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
-</pre></div>
-
-
-<p>可以看到结果如下：  </p>
-<div class="highlight"><pre><span></span>{
-    &#39;_id&#39;: &#39;5&#39;,
-    &#39;_index&#39;: &#39;school&#39;,
-    &#39;_source&#39;: {&#39;age&#39;: 28,
-                &#39;introduction&#39;: &#39;这位是吴芳教师，职称：助教，年龄：28&#39;,
-                &#39;name&#39;: &#39;吴芳&#39;,
-                &#39;t_id&#39;: &#39;5530eac6a8075110c87a67bf6caa8142&#39;,
-                &#39;title&#39;: &#39;助教&#39;},
-    &#39;_type&#39;: &#39;teacher&#39;,
-    &#39;_version&#39;: 1,
-    &#39;found&#39;: True
-}
-</pre></div>
-
-
-<p>其中<code>_source</code>字段即获取到的文档实体。</p>
-<p>联系我：<a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#104;&#111;&#117;&#108;&#117;&#56;&#54;&#55;&#52;&#64;&#98;&#117;&#112;&#116;&#46;&#101;&#100;&#117;&#46;&#99;&#110;">&#104;&#111;&#117;&#108;&#117;&#56;&#54;&#55;&#52;&#64;&#98;&#117;&#112;&#116;&#46;&#101;&#100;&#117;&#46;&#99;&#110;</a></p>                </article>
-            </aside><!-- /#featured -->
-                <section id="content" class="body">
-                    <h1>Other articles</h1>
-                    <hr />
-                    <ol id="posts-list" class="hfeed">
+</footer><!-- /.post-info -->                <p>This serie of posts introduces basic usage of Elasticsearch in 中文</p>
+                <a class="readmore" href="https://houluy.github.io/learning-elasticsearch-i.html">read more</a>
+                </div><!-- /.entry-content -->
+            </article></li>
 
             <li><article class="hentry">
                 <header>
@@ -348,39 +303,11 @@ give convenience for users since they don''t have to re-input their passwords re
                 <a class="readmore" href="https://houluy.github.io/about-refresh_token.html">read more</a>
                 </div><!-- /.entry-content -->
             </article></li>
-
-            <li><article class="hentry">
-                <header>
-                    <h1><a href="https://houluy.github.io/one-application-of-yield.html" rel="bookmark"
-                           title="Permalink to One application of yield">One application of yield</a></h1>
-                </header>
-
-                <div class="entry-content">
-<footer class="post-info">
-        <abbr class="published" title="2016-12-18T00:00:00+08:00">
-                Published: 日 18 十二月 2016
-        </abbr>
-
-        <address class="vcard author">
-                By                         <a class="url fn" href="https://houluy.github.io/author/hou-lu.html">Hou, lu</a>
-        </address>
-<p>In <a href="https://houluy.github.io/category/python-notes.html">Python-NOTes</a>.</p>
-
-</footer><!-- /.post-info -->                <p>When you want to generate an iterable letter list such as ['A', 'B', ..., 'J'], using <code>yield</code> will be very graceful.<br>
-An example is listed below:</p>
-<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">letter_increment</span><span class="p">(</span><span class="n">letter</span><span class="p">):</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">letter</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
-    <span class="k">return</span> <span class="nb">chr</span><span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="n">letter</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">iter_letter</span><span class="p">(</span><span class="n">start_letter</span><span class="o">=</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="n">end_letter</span><span class="o">=</span><span class="s1">&#39;J&#39;</span><span class="p">):</span>
-    <span class="n">current_letter</span> <span class="o">=</span> <span class="n">start_letter</span>
-    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-        <span class="k">yield</span> <span class="n">current_letter</span>
-        <span class="k">if …</span></pre></div>
-                <a class="readmore" href="https://houluy.github.io/one-application-of-yield.html">read more</a>
-                </div><!-- /.entry-content -->
-            </article></li>
                 </ol><!-- /#posts-list -->
+<p class="paginator">
+    Page 1 / 2
+        <a href="https://houluy.github.io/index2.html">&raquo;</a>
+</p>
                 </section><!-- /#content -->
         <section id="extras" class="body">
                 <div class="blogroll">

@@ -45,7 +45,16 @@
 <p>返回只包含字段'a'与'b'的值。</p>
 <h2>动态更新Elasticsearch部分配置</h2>
 <p>如果需要不停机更新Elasticsearch的配置，可以使用Elasticsearch的动态配置修改机制。在Python中，使用<code>ClusterClient</code>实例完成：  </p>
-<div class="highlight"><pre><span></span>
+<div class="highlight"><pre><span></span><span class="n">cc</span> <span class="o">=</span> <span class="n">elasticsearch</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">ClusterClient</span><span class="p">(</span><span class="n">es</span><span class="p">)</span>
+<span class="n">setting_body</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;transient&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;setting_name&#39;</span><span class="p">:</span> <span class="s1">&#39;setting_value&#39;</span><span class="p">,</span> <span class="c1">#Available before next startup</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;persistent&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;setting_name&#39;</span><span class="p">:</span> <span class="s1">&#39;setting_value&#39;</span><span class="p">,</span> <span class="c1">#Available permanently</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+<span class="n">cc</span><span class="o">.</span><span class="n">put_settings</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="n">setting_body</span><span class="p">)</span>
 </pre></div>
 
 
@@ -68,18 +77,36 @@
 
 
 <p>返回<code>{acknowlegement: True}</code>表示创建成功。注意：<code>location</code>属性所指定的位置必须在配置文件的<code>path.repo</code>列表中。例如：<code>path.repo: ['/tmp/back', '/root/back']</code>。
-<code>path.repo</code>属性不支持动态更新。</p>
+<strong><code>path.repo</code>属性不支持动态更新</strong>。</p>
 <p>之后，为指定的索引创建快照：</p>
 <div class="highlight"><pre><span></span><span class="n">snapshot_body</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;indices&#39;</span><span class="p">:</span> <span class="s1">&#39;_all&#39;</span><span class="p">,</span> <span class="c1">#indices that need backup</span>
     <span class="s1">&#39;ignore_unavailable&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+    <span class="s1">&#39;includ_global_state&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span> <span class="c1">#Also snapshot the global state of indices</span>
 <span class="p">}</span>
 <span class="n">sc</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s1">&#39;repo_name&#39;</span><span class="p">,</span> <span class="n">snapshot</span><span class="o">=</span><span class="s1">&#39;snap_name&#39;</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">snapshot_body</span><span class="p">,</span> <span class="n">wait_for_completion</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </pre></div>
 
 
 <p><code>wait_for_completion=True</code>将等待快照完全创建结束后获取创建结果。  </p>
-<h3>快照恢复</h3>                </article>
+<h3>快照恢复</h3>
+<p>通过<code>restore()</code>可以将索引恢复至某个快照状态。首先需要将想要恢复的索引<code>close</code>掉：  </p>
+<div class="highlight"><pre><span></span><span class="c1">#Need index instances</span>
+<span class="n">indices</span> <span class="o">=</span> <span class="n">elasticsearch</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">IndicesClient</span><span class="p">(</span><span class="n">es</span><span class="p">)</span>
+<span class="n">indices</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s1">&#39;index_name&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>之后，恢复快照：  </p>
+<div class="highlight"><pre><span></span><span class="n">extra_settings</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;indices&#39;</span><span class="p">:</span> <span class="s1">&#39;index_name&#39;</span><span class="p">,</span> <span class="c1">#Specify index name that needs to be restored</span>
+    <span class="s1">&#39;ignore_unavailable&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+    <span class="s1">&#39;includ_global_state&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span> <span class="c1">#Also restore the global state of indices</span>
+    <span class="s1">&#39;rename_pattern&#39;</span><span class="p">:</span> <span class="s1">&#39;rename&#39;</span> <span class="c1">#Rename indices with regular expressions</span>
+    <span class="s1">&#39;rename_replacement&#39;</span><span class="p">:</span> <span class="s1">&#39;rename&#39;</span> <span class="c1">#Rename by replacing</span>
+<span class="p">}</span>
+<span class="n">sc</span><span class="o">.</span><span class="n">restore</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="s1">&#39;repo_name&#39;</span><span class="p">,</span> <span class="n">snapshot</span><span class="o">=</span><span class="s1">&#39;snap_name&#39;</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">extra_settings</span><span class="p">)</span>
+</pre></div>                </article>
             </aside><!-- /#featured -->
                 <section id="content" class="body">
                     <h1>Other articles</h1>

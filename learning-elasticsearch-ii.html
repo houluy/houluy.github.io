@@ -42,13 +42,7 @@
         </address>
 <p>In <a href="https://houluy.github.io/category/elasticsearch.html">Elasticsearch</a>.</p>
 <p>tags: <a href="https://houluy.github.io/tag/elasticsearch.html">Elasticsearch</a> </p>
-</footer><!-- /.post-info -->      <p>希望限制<code>search</code>接口返回的字段，通过在<code>query</code>属性中增加{ '_source': '*' }来做限制，或在SDK的search函数中增加参数:</p>
-<div class="highlight"><pre><span></span><span class="n">es</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">_source</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">])</span>
-</pre></div>
-
-
-<p>返回只包含字段'a'与'b'的值。</p>
-<h2>动态更新Elasticsearch部分配置</h2>
+</footer><!-- /.post-info -->      <h2>动态更新Elasticsearch部分配置</h2>
 <p>如果需要不停机更新Elasticsearch的配置，可以使用Elasticsearch的动态配置修改机制。在Python中，使用<code>ClusterClient</code>实例完成：  </p>
 <div class="highlight"><pre><span></span><span class="n">cc</span> <span class="o">=</span> <span class="n">elasticsearch</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">ClusterClient</span><span class="p">(</span><span class="n">es</span><span class="p">)</span>
 <span class="n">setting_body</span> <span class="o">=</span> <span class="p">{</span>

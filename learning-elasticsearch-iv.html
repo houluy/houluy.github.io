@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
         <meta charset="utf-8" />
-        <title>LuCima's SpaCe</title>
+        <title>Learning Elasticsearch (iv)</title>
         <link rel="stylesheet" href="https://houluy.github.io/theme/css/main.css" />
 
         <!--[if IE]>
@@ -17,43 +17,41 @@
         <header id="banner" class="body">
                 <h1><a href="https://houluy.github.io/">LuCima's SpaCe </a></h1>
                 <nav><ul>
-                    <li><a href="https://houluy.github.io/category/elasticsearch.html">Elasticsearch</a></li>
+                    <li class="active"><a href="https://houluy.github.io/category/elasticsearch.html">Elasticsearch</a></li>
                     <li><a href="https://houluy.github.io/category/games.html">Games</a></li>
                     <li><a href="https://houluy.github.io/category/python-notes.html">Python-NOTes</a></li>
                     <li><a href="https://houluy.github.io/category/security.html">Security</a></li>
                 </ul></nav>
         </header><!-- /#banner -->
 <section id="content" class="body">
-<h1>Archives for LuCima's SpaCe</h1>
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="https://houluy.github.io/learning-elasticsearch-iv.html" rel="bookmark"
+           title="Permalink to Learning Elasticsearch (iv)">Learning Elasticsearch (iv)</a></h1>
+    </header>
 
-<dl>
-    <dt>一 21 八月 2017</dt>
-    <dd><a href="https://houluy.github.io/learning-elasticsearch-iii.html">Learning Elasticsearch (iii)</a></dd>
-    <dt>三 14 六月 2017</dt>
-    <dd><a href="https://houluy.github.io/learning-elasticsearch-ii.html">Learning Elasticsearch (ii)</a></dd>
-    <dt>三 24 五月 2017</dt>
-    <dd><a href="https://houluy.github.io/learning-elasticsearch-i.html">Learning Elasticsearch (i)</a></dd>
-    <dt>三 24 五月 2017</dt>
-    <dd><a href="https://houluy.github.io/learning-elasticsearch-iv.html">Learning Elasticsearch (iv)</a></dd>
-    <dt>四 23 三月 2017</dt>
-    <dd><a href="https://houluy.github.io/an-tic-tac-toe-with-ai.html">An Tic Tac Toe with AI</a></dd>
-    <dt>二 17 一月 2017</dt>
-    <dd><a href="https://houluy.github.io/cerberus-triple-head-hound-of-hades.html">Cerberus: Triple-head hound of Hades</a></dd>
-    <dt>五 23 十二月 2016</dt>
-    <dd><a href="https://houluy.github.io/on-the-beginning.html">On the BeGinNing</a></dd>
-    <dt>五 23 十二月 2016</dt>
-    <dd><a href="https://houluy.github.io/operaions-on-basic-data-structure-dict.html">Operaions on Basic data structure -- dict</a></dd>
-    <dt>五 23 十二月 2016</dt>
-    <dd><a href="https://houluy.github.io/operaions-on-basic-data-structure-list.html">Operaions on Basic data structure -- list</a></dd>
-    <dt>三 21 十二月 2016</dt>
-    <dd><a href="https://houluy.github.io/operations-on-file-and-path.html">Operations on FILE and PATH</a></dd>
-    <dt>二 20 十二月 2016</dt>
-    <dd><a href="https://houluy.github.io/how-to-implement-user-datagram-protocol-with-python-raw-socket.html">How to implement User Datagram Protocol with Python RAW socket</a></dd>
-    <dt>日 18 十二月 2016</dt>
-    <dd><a href="https://houluy.github.io/about-refresh_token.html">About refresh_token</a></dd>
-    <dt>日 18 十二月 2016</dt>
-    <dd><a href="https://houluy.github.io/one-application-of-yield.html">One application of yield</a></dd>
-</dl>
+    <div class="entry-content">
+<footer class="post-info">
+        <abbr class="published" title="2017-05-24T00:00:00+08:00">
+                Published: 三 24 五月 2017
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="https://houluy.github.io/author/hou-lu.html">Hou, Lu</a>
+        </address>
+<p>In <a href="https://houluy.github.io/category/elasticsearch.html">Elasticsearch</a>.</p>
+<p>tags: <a href="https://houluy.github.io/tag/elasticsearch.html">Elasticsearch</a> </p>
+</footer><!-- /.post-info -->      <h1>Searching (second part)</h1>
+<h2>mapping</h2>
+<p>在[上一部分]（https://houluy.github.io/learning-elasticsearch-iii.html)遗留的问题2，通过<code>match</code>搜索<code>a</code>字段值为'ban'的文档，结果<code>banner</code>等值也会返回。其中一个原因在于<code>match</code>使用模糊全文搜索机制，所有包含<code>ban</code>的字段都可能被搜索到。  Elasticsearch的搜索机制可以分为如下几类：<br>
+1. 结构化搜索
+2. 全文搜索</p>
+<h3>terminate_after</h3>
+<p>有时候，我们并不想获得结果，而仅仅是确认我们想搜索的内容是否存在。这时，我们可以指定参数<code>size=0</code>以及<code>terminate_after=True</code>来让结果中<strong>不包含</strong>内容体，只包含元信息。通过返回结果中的<code>total</code>字段，可以判断搜索内容是否存在。</p>
+    </div><!-- /.entry-content -->
+
+  </article>
 </section>
         <section id="extras" class="body">
                 <div class="blogroll">

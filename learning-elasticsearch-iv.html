@@ -18,7 +18,6 @@
                 <h1><a href="https://houluy.github.io/">LuCima's SpaCe </a></h1>
                 <nav><ul>
                     <li class="active"><a href="https://houluy.github.io/category/elasticsearch.html">Elasticsearch</a></li>
-                    <li><a href="https://houluy.github.io/category/games.html">Games</a></li>
                     <li><a href="https://houluy.github.io/category/python-notes.html">Python-NOTes</a></li>
                     <li><a href="https://houluy.github.io/category/security.html">Security</a></li>
                 </ul></nav>
@@ -44,7 +43,8 @@
 <p>tags: <a href="https://houluy.github.io/tag/elasticsearch.html">Elasticsearch</a> </p>
 </footer><!-- /.post-info -->      <h1>Searching (second part)</h1>
 <h2>mapping</h2>
-<p>在[上一部分]（https://houluy.github.io/learning-elasticsearch-iii.html)遗留的问题2，通过<code>match</code>搜索<code>a</code>字段值为'ban'的文档，结果<code>banner</code>等值也会返回。其中一个原因在于<code>match</code>使用模糊全文搜索机制，所有包含<code>ban</code>的字段都可能被搜索到。  Elasticsearch的搜索机制可以分为如下几类：<br>
+<p>在<a href="https://houluy.github.io/learning-elasticsearch-iii.html">上一部分</a>遗留的问题2，通过<code>match</code>搜索<code>a</code>字段值为<code>ban</code>的文档，结果<code>banner</code>等值也会返回。其中一个原因在于<code>match</code>使用模糊全文搜索机制，所有包含<code>ban</code>的字段都可能被搜索到。<br>
+Elasticsearch的搜索机制可以分为如下几类：<br>
 1. 结构化搜索
 2. 全文搜索</p>
 <h3>terminate_after</h3>

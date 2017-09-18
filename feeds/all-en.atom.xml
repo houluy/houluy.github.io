@@ -1,16 +1,288 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>A Pelican Blog</title><link href="/" rel="alternate"></link><link href="/feeds/all-en.atom.xml" rel="self"></link><id>/</id><updated>2017-01-17T00:00:00+00:00</updated><entry><title>Cerberus: Triple-head hound of Hades</title><link href="/cerberus-triple-head-hound-of-hades.html" rel="alternate"></link><published>2017-01-17T00:00:00+00:00</published><updated>2017-01-17T00:00:00+00:00</updated><author><name></name></author><id>tag:None,2017-01-17:/cerberus-triple-head-hound-of-hades.html</id><summary type="html">&lt;p&gt;rules_set_registry: only stores schema itself, for example &lt;code&gt;{'type': 'string', 'required': True}&lt;/code&gt;&lt;br&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>A Pelican Blog</title><link href="/" rel="alternate"></link><link href="/feeds/all-en.atom.xml" rel="self"></link><id>/</id><updated>2017-08-21T00:00:00+00:00</updated><entry><title>Learning Elasticsearch (iii)</title><link href="/learning-elasticsearch-iii.html" rel="alternate"></link><published>2017-08-21T00:00:00+00:00</published><updated>2017-08-21T00:00:00+00:00</updated><author><name>Hou, Lu</name></author><id>tag:None,2017-08-21:/learning-elasticsearch-iii.html</id><summary type="html">&lt;p&gt;This serie of posts introduces basic usage of Elasticsearch in 中文&lt;/p&gt;</summary><content type="html">&lt;h1&gt;Searching (first part)&lt;/h1&gt;
+&lt;h2&gt;search接口基本用法&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;search&lt;/code&gt;功能是elasticsearch的一个核心功能。通过构造搜索语句，用户可以获取各类目标数据。&lt;/p&gt;
+&lt;h3&gt;search API&lt;/h3&gt;
+&lt;p&gt;Python elasticsearch提供了&lt;code&gt;search&lt;/code&gt;函数用以调用&lt;code&gt;search&lt;/code&gt; API。其中，查询语句(Query DSL), 以参数&lt;code&gt;body&lt;/code&gt;的形式传入（或原生&lt;code&gt;Lucene&lt;/code&gt;语句以&lt;code&gt;q&lt;/code&gt;参数形式传入）。例如，想要搜索&lt;code&gt;index&lt;/code&gt;索引下，&lt;code&gt;type&lt;/code&gt;类型中，所有字段&lt;code&gt;a='ban'&lt;/code&gt;的文档，可以这样构建搜索参数：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;search_body&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="s1"&gt;&amp;#39;query&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;match&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+            &lt;span class="s1"&gt;&amp;#39;a&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;ban&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="p"&gt;},&lt;/span&gt;
+    &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="n"&gt;es&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;search&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;index&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;index&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;doc_type&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;type&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;body&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;search_body&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;结果将显示所有包含该字段的文档。&lt;br&gt;
+上述搜索结果可以看出如下问题：&lt;br&gt;
+1. 结果最多返回了10条&lt;br&gt;
+2. &lt;code&gt;a&lt;/code&gt;等于&lt;code&gt;banner&lt;/code&gt;的结果也返回了  &lt;/p&gt;
+&lt;h3&gt;分页查询&lt;/h3&gt;
+&lt;p&gt;对于上述问题1，elasticsearch的&lt;code&gt;search&lt;/code&gt;接口默认只返回10条数据。如果你需要更多的数据，可以通过&lt;code&gt;size&lt;/code&gt;参数指定，也可以通过&lt;code&gt;from&lt;/code&gt;参数指定起始位置以便分页查询：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;search_body&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="s1"&gt;&amp;#39;query&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;match&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+            &lt;span class="s1"&gt;&amp;#39;a&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;ban&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="p"&gt;},&lt;/span&gt;
+    &lt;span class="p"&gt;},&lt;/span&gt;
+    &lt;span class="s1"&gt;&amp;#39;size&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;20&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="s1"&gt;&amp;#39;from&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="n"&gt;es&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;search&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;index&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;index&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;doc_type&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;type&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;body&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;search_body&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;这样将返回低&lt;strong&gt;100&lt;/strong&gt;至&lt;strong&gt;119&lt;/strong&gt;这&lt;strong&gt;20&lt;/strong&gt;条数据。 
+事实上，elasticsearch支持更快速的&lt;code&gt;scroll&lt;/code&gt;方法来分页查询数据。当你在&lt;code&gt;search&lt;/code&gt;中增加&lt;code&gt;scroll&lt;/code&gt;参数并指定一个时间时（例如，&lt;code&gt;scroll=1m&lt;/code&gt; 1分钟），elasticsearch将自动保存当前的搜索上下文直至生命周期结束。同时，ES将在搜索结果中返回一个&lt;code&gt;scroll_id&lt;/code&gt;。当你下一次发起搜索请求时，你可以直接利用&lt;code&gt;scroll_id&lt;/code&gt;去访问数据：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;search_body&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="s1"&gt;&amp;#39;query&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;match&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+            &lt;span class="s1"&gt;&amp;#39;a&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;ban&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="p"&gt;},&lt;/span&gt;
+    &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="n"&gt;res&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;es&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;search&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;index&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;index&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;doc_type&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;type&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;body&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;search_body&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;scroll&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;1m&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;scroll_id&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;res&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;_scroll_id&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;scroll_res&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;es&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;scroll&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;scroll_id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;scroll_id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;scroll&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;2m&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="c1"&gt;#Set another scroll expiry time&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;em&gt;注：每次调用&lt;code&gt;scroll&lt;/code&gt;函数都将返回新的&lt;code&gt;scroll_id&lt;/code&gt;，并刷新过期时间(或再次指定过期时间）&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;你可以通过&lt;code&gt;clear_scroll&lt;/code&gt;接口手动删除某些&lt;code&gt;scroll&lt;/code&gt;：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;es&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;clear_scroll&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;scroll_id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;scroll_id&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;限制返回字段&lt;/h3&gt;
+&lt;p&gt;希望限制&lt;code&gt;search&lt;/code&gt;接口返回的字段，通过在&lt;code&gt;query&lt;/code&gt;属性中增加&lt;code&gt;{ '_source': '*' }&lt;/code&gt;来做限制，或在SDK的search函数中增加参数：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;es&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;search&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;...&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_source&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;a&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;b&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;则返回的结果中只包含字段&lt;code&gt;a&lt;/code&gt;与&lt;code&gt;b&lt;/code&gt;的值。&lt;/p&gt;
+&lt;h3&gt;关于score&lt;/h3&gt;
+&lt;p&gt;在搜索的结果项中，可以看到存在一个名为&lt;code&gt;_score&lt;/code&gt;的参数，该参数表示了搜索结果的相关度。elasticsearch通过一定的匹配算法进行全文搜索，&lt;code&gt;_score&lt;/code&gt;值越高，则结果越符合搜索需求(elasticsearch采用TF-IDF算法计算相关度）。&lt;br&gt;
+有时候我们需要过滤掉相关度过低的结果，例如，当搜索&lt;code&gt;三国&lt;/code&gt;的时候，我们期望的结果是三国类的文本，例如&lt;code&gt;三国志&lt;/code&gt;，&lt;code&gt;三国演义&lt;/code&gt;等，然而&lt;code&gt;三字经&lt;/code&gt;等文本同样会被搜索到(后面会详细介绍原因）。在搜索体中指定最小允许的&lt;code&gt;score&lt;/code&gt;值可以过滤不相关项：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;search_body&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="s1"&gt;&amp;#39;query&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;match&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+            &lt;span class="s1"&gt;&amp;#39;a&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;ban&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="p"&gt;},&lt;/span&gt;
+    &lt;span class="p"&gt;},&lt;/span&gt;
+    &lt;span class="n"&gt;min_score&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="n"&gt;res&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;es&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;search&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;index&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;index&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;doc_type&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;type&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;body&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;search_body&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;</content><category term="Elasticsearch"></category></entry><entry><title>Learning Elasticsearch (ii)</title><link href="/learning-elasticsearch-ii.html" rel="alternate"></link><published>2017-06-14T00:00:00+00:00</published><updated>2017-06-14T00:00:00+00:00</updated><author><name>Hou, Lu</name></author><id>tag:None,2017-06-14:/learning-elasticsearch-ii.html</id><summary type="html">&lt;p&gt;This serie of posts introduces basic usage of Elasticsearch in 中文&lt;/p&gt;</summary><content type="html">&lt;h2&gt;动态更新Elasticsearch部分配置&lt;/h2&gt;
+&lt;p&gt;如果需要不停机更新Elasticsearch的配置，可以使用Elasticsearch的动态配置修改机制。在Python中，使用&lt;code&gt;ClusterClient&lt;/code&gt;实例完成：  &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;cc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;elasticsearch&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;client&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ClusterClient&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;es&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;setting_body&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="s1"&gt;&amp;#39;transient&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;setting_name&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;setting_value&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;#Available before next startup&lt;/span&gt;
+    &lt;span class="p"&gt;},&lt;/span&gt;
+    &lt;span class="s1"&gt;&amp;#39;persistent&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;setting_name&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;setting_value&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;#Available permanently&lt;/span&gt;
+    &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="n"&gt;cc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;put_settings&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;body&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;setting_body&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Elasticsearch快照&lt;/h2&gt;
+&lt;p&gt;当我们需要定期为数据做备份时，可以使用Elasticsearch提供的快照(snapshot)功能。要如此，我们需要先注册一个快照的仓库(repository).在Python SDK中，快照的操作由快照实例完成：  &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;sc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;elasticsearch&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;client&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;SnapshotClient&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;es&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="c1"&gt;#Get a repo&lt;/span&gt;
+&lt;span class="n"&gt;repo&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;sc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_repository&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;repo&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="c1"&gt;#Create a repo&lt;/span&gt;
+    &lt;span class="n"&gt;repo_settings&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;type&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;fs&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;settings&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+            &lt;span class="s1"&gt;&amp;#39;compress&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;true&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+            &lt;span class="s1"&gt;&amp;#39;location&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;/tmp/back&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="p"&gt;},&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="n"&gt;sc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;create_repository&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;repository&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;repo_name&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;body&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;repo_settings&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;返回&lt;code&gt;{acknowlegement: True}&lt;/code&gt;表示创建成功。注意：&lt;code&gt;location&lt;/code&gt;属性所指定的位置必须在配置文件的&lt;code&gt;path.repo&lt;/code&gt;列表中。例如：&lt;code&gt;path.repo: ['/tmp/back', '/root/back']&lt;/code&gt;。
+&lt;strong&gt;&lt;code&gt;path.repo&lt;/code&gt;属性不支持动态更新&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;之后，为指定的索引创建快照：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;snapshot_body&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="s1"&gt;&amp;#39;indices&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;_all&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;#indices that need backup&lt;/span&gt;
+    &lt;span class="s1"&gt;&amp;#39;ignore_unavailable&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="s1"&gt;&amp;#39;includ_global_state&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;#Also snapshot the global state of indices&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="n"&gt;sc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;create&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;repository&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;repo_name&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;snapshot&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;snap_name&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;body&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;snapshot_body&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;wait_for_completion&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;code&gt;wait_for_completion=True&lt;/code&gt;将等待快照完全创建结束后获取创建结果。  &lt;/p&gt;
+&lt;h3&gt;快照恢复&lt;/h3&gt;
+&lt;p&gt;通过&lt;code&gt;restore()&lt;/code&gt;可以将索引恢复至某个快照状态。首先需要将想要恢复的索引&lt;code&gt;close&lt;/code&gt;掉：  &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;#Need index instances&lt;/span&gt;
+&lt;span class="n"&gt;indices&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;elasticsearch&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;client&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;IndicesClient&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;es&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;indices&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;close&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;index&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;index_name&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;之后，恢复快照：  &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;extra_settings&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="s1"&gt;&amp;#39;indices&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;index_name&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;#Specify index name that needs to be restored&lt;/span&gt;
+    &lt;span class="s1"&gt;&amp;#39;ignore_unavailable&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="s1"&gt;&amp;#39;includ_global_state&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;#Also restore the global state of indices&lt;/span&gt;
+    &lt;span class="s1"&gt;&amp;#39;rename_pattern&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;rename&amp;#39;&lt;/span&gt; &lt;span class="c1"&gt;#Rename indices with regular expressions&lt;/span&gt;
+    &lt;span class="s1"&gt;&amp;#39;rename_replacement&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;rename&amp;#39;&lt;/span&gt; &lt;span class="c1"&gt;#Rename by replacing&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="n"&gt;sc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;restore&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;repository&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;repo_name&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;snapshot&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;snap_name&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;body&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;extra_settings&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;</content><category term="Elasticsearch"></category></entry><entry><title>Learning Elasticsearch (i)</title><link href="/learning-elasticsearch-i.html" rel="alternate"></link><published>2017-05-24T00:00:00+00:00</published><updated>2017-05-24T00:00:00+00:00</updated><author><name>Hou, Lu</name></author><id>tag:None,2017-05-24:/learning-elasticsearch-i.html</id><summary type="html">&lt;p&gt;This serie of posts introduces basic usage of Elasticsearch in 中文&lt;/p&gt;</summary><content type="html">&lt;p&gt;本文以Elasticsearch的Python（人生苦短）客户端为例，一起来感受Elasticsearch（Python）的强大之处。&lt;br&gt;
+推荐Python版本：3.5&lt;/p&gt;
+&lt;p&gt;官方文档：&lt;a href="https://elasticsearch-py.readthedocs.io/en/master/"&gt;https://elasticsearch-py.readthedocs.io/en/master/&lt;/a&gt;&lt;/p&gt;
+&lt;h2&gt;Elasticsearch Python Client安装&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;pip install elasticsearch
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;ik分词器&lt;/h2&gt;
+&lt;p&gt;Elasticsearch内置多种类型分词器，但均不支持中文。因而本文选取ik分词器做为中文分词工具
+ik-analyzer: &lt;a href="https://github.com/medcl/elasticsearch-analysis-ik"&gt;https://github.com/medcl/elasticsearch-analysis-ik&lt;/a&gt;&lt;/p&gt;
+&lt;h2&gt;Client类&lt;/h2&gt;
+&lt;p&gt;想要使用elasticsearch面向document的各个接口，需要先构建一个&lt;code&gt;Elastic&lt;/code&gt;实例：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;elasticsearch&lt;/span&gt;
+&lt;span class="n"&gt;es&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;elasticsearch&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Elastic&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;host&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;xxx&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;port&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;9200&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;该&lt;code&gt;es&lt;/code&gt;用于使用面向document的接口。其他接口（如索引index相关接口）需要实例化&lt;code&gt;es&lt;/code&gt;的一些子类。&lt;/p&gt;
+&lt;h2&gt;es子类&lt;/h2&gt;
+&lt;p&gt;为了操作Elasticsearch的索引，我们需要初始化一个es的子类实例:  &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;indices&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;elasticsearch&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;client&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;IndicesClient&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;es&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;此后，我们可以使用&lt;code&gt;indices&lt;/code&gt;进行索引级的各种操作  &lt;/p&gt;
+&lt;h2&gt;建立index&lt;/h2&gt;
+&lt;p&gt;利用&lt;code&gt;indices&lt;/code&gt;实例可以建立新的索引：  &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;res&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;indices&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;create&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;index&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;school&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;body&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;ind_mappings&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;code&gt;body&lt;/code&gt;参数会在后续介绍。可以将&lt;code&gt;res&lt;/code&gt;打印，查看是否建立成功。  &lt;/p&gt;
+&lt;h2&gt;基本操作：&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;增&lt;/strong&gt;删查改&lt;/p&gt;
+&lt;p&gt;增加一个文档: &lt;code&gt;es.create(index='school', doc_type='teacher', id=id, body=obj_doc)&lt;/code&gt;，将会在索引&lt;code&gt;school&lt;/code&gt;下的&lt;code&gt;teacher&lt;/code&gt;类型中增加一个&lt;code&gt;id&lt;/code&gt;为id(整型)的文档，内容为&lt;code&gt;obj_doc&lt;/code&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;增&lt;strong&gt;删&lt;/strong&gt;查改&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;删除指定id的文档：&lt;code&gt;es.delete(school='school', doc_type='teacher', id=id)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;删除查询到的文档：&lt;code&gt;es.delete_by_query(school='school', doc_type='teacher', body=query_body)&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;增删&lt;strong&gt;查&lt;/strong&gt;改&lt;/p&gt;
+&lt;p&gt;这里仅介绍通过id获取文档的方法：&lt;code&gt;es.get(school='school', doc_type='teacher', id=id)&lt;/code&gt;&lt;br&gt;
+关于复杂又强大的查询方式，将有相应篇幅介绍！&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;增删查&lt;strong&gt;改&lt;/strong&gt;&lt;br&gt;
+同删除接口类似，修改某个文档接口也分为指定id和查询修改两类：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;修改指定id的文档：&lt;code&gt;es.update(school='school', doc_type='teacher', id=id, body=update_body)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;修改查询到的文档：&lt;code&gt;es.update_by_query(school='school', doc_type='teacher', body=query_and_update_body)&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;示例:&lt;/h3&gt;
+&lt;p&gt;下面给出一个示例，数据生成程序位于&lt;code&gt;example&lt;/code&gt;目录下的&lt;code&gt;generate_ex_data.py&lt;/code&gt;文件。假设JSON数据存于文件&lt;code&gt;data.json&lt;/code&gt;中：  &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;json&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;elasticsearch&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;pprint&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;pprint&lt;/span&gt;
+
+&lt;span class="c1"&gt;#Instantiation&lt;/span&gt;
+&lt;span class="n"&gt;es&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;elasticsearch&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Elastic&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;host&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;localhost&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;indices&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;elasticsearch&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;client&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;IndicesClient&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;es&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="c1"&gt;#create index&lt;/span&gt;
+&lt;span class="n"&gt;indices&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;create&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;index&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;school&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="c1"&gt;#read JSON data from file&lt;/span&gt;
+&lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="nb"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;data.json&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;r&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;teachers&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;json&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;load&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="c1"&gt;#create documents&lt;/span&gt;
+&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;ind&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;val&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;enumerate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;teachers&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;try&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;res&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;es&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;create&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;index&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;school&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;doc_type&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;teacher&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nb"&gt;id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;ind&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;body&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;val&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;except&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Create No. {} doc ERROR!&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ind&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;尝试&lt;code&gt;get&lt;/code&gt;一个文档：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;res&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;es&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;index&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;school&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;doc_type&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;teacher&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nb"&gt;id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;pprint&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;res&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;可以看到结果如下：  &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;{
+    &amp;#39;_id&amp;#39;: &amp;#39;5&amp;#39;,
+    &amp;#39;_index&amp;#39;: &amp;#39;school&amp;#39;,
+    &amp;#39;_source&amp;#39;: {&amp;#39;age&amp;#39;: 28,
+                &amp;#39;introduction&amp;#39;: &amp;#39;这位是吴芳教师，职称：助教，年龄：28&amp;#39;,
+                &amp;#39;name&amp;#39;: &amp;#39;吴芳&amp;#39;,
+                &amp;#39;t_id&amp;#39;: &amp;#39;5530eac6a8075110c87a67bf6caa8142&amp;#39;,
+                &amp;#39;title&amp;#39;: &amp;#39;助教&amp;#39;},
+    &amp;#39;_type&amp;#39;: &amp;#39;teacher&amp;#39;,
+    &amp;#39;_version&amp;#39;: 1,
+    &amp;#39;found&amp;#39;: True
+}
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;其中&lt;code&gt;_source&lt;/code&gt;字段即获取到的文档实体。&lt;/p&gt;
+&lt;p&gt;联系我：&lt;a href="&amp;#109;&amp;#97;&amp;#105;&amp;#108;&amp;#116;&amp;#111;&amp;#58;&amp;#104;&amp;#111;&amp;#117;&amp;#108;&amp;#117;&amp;#56;&amp;#54;&amp;#55;&amp;#52;&amp;#64;&amp;#98;&amp;#117;&amp;#112;&amp;#116;&amp;#46;&amp;#101;&amp;#100;&amp;#117;&amp;#46;&amp;#99;&amp;#110;"&gt;&amp;#104;&amp;#111;&amp;#117;&amp;#108;&amp;#117;&amp;#56;&amp;#54;&amp;#55;&amp;#52;&amp;#64;&amp;#98;&amp;#117;&amp;#112;&amp;#116;&amp;#46;&amp;#101;&amp;#100;&amp;#117;&amp;#46;&amp;#99;&amp;#110;&lt;/a&gt;&lt;/p&gt;</content><category term="Elasticsearch"></category></entry><entry><title>Learning Elasticsearch (iv)</title><link href="/learning-elasticsearch-iv.html" rel="alternate"></link><published>2017-05-24T00:00:00+00:00</published><updated>2017-05-24T00:00:00+00:00</updated><author><name>Hou, Lu</name></author><id>tag:None,2017-05-24:/learning-elasticsearch-iv.html</id><summary type="html">&lt;p&gt;This serie of posts introduces basic usage of Elasticsearch in 中文&lt;/p&gt;</summary><content type="html">&lt;h1&gt;Searching (second part)&lt;/h1&gt;
+&lt;h2&gt;mapping&lt;/h2&gt;
+&lt;p&gt;在&lt;a href="https://houluy.github.io/learning-elasticsearch-iii.html"&gt;上一部分&lt;/a&gt;遗留的问题2，通过&lt;code&gt;match&lt;/code&gt;搜索&lt;code&gt;a&lt;/code&gt;字段值为&lt;code&gt;ban&lt;/code&gt;的文档，结果&lt;code&gt;banner&lt;/code&gt;等值也会返回。其中一个原因在于&lt;code&gt;match&lt;/code&gt;使用模糊全文搜索机制，所有包含&lt;code&gt;ban&lt;/code&gt;的字段都可能被搜索到。&lt;br&gt;
+Elasticsearch的搜索机制可以分为如下几类：&lt;br&gt;
+1. 结构化搜索&lt;br&gt;
+2. 全文搜索  &lt;/p&gt;
+&lt;h3&gt;terminate_after&lt;/h3&gt;
+&lt;p&gt;有时候，我们并不想获得结果，而仅仅是确认我们想搜索的内容是否存在。这时，我们可以指定参数&lt;code&gt;size=0&lt;/code&gt;以及&lt;code&gt;terminate_after=True&lt;/code&gt;来让结果中&lt;strong&gt;不包含&lt;/strong&gt;内容体，只包含元信息。通过返回结果中的&lt;code&gt;total&lt;/code&gt;字段，可以判断搜索内容是否存在。&lt;/p&gt;</content><category term="Elasticsearch"></category></entry><entry><title>Cerberus: Triple-head hound of Hades</title><link href="/cerberus-triple-head-hound-of-hades.html" rel="alternate"></link><published>2017-01-17T00:00:00+00:00</published><updated>2017-01-17T00:00:00+00:00</updated><author><name></name></author><id>tag:None,2017-01-17:/cerberus-triple-head-hound-of-hades.html</id><summary type="html">&lt;p&gt;rules_set_registry: only stores schema itself, for example &lt;code&gt;{'type': 'string', 'required': True}&lt;/code&gt;&lt;br&gt;
 schema_registry: stores complete schema, for example &lt;code&gt;{'name': {'type': 'string', 'required': True}}&lt;/code&gt;, it can be used directly.  &lt;/p&gt;
 &lt;p&gt;It's not easy to &lt;code&gt;allow_unknown&lt;/code&gt; for parent schema (for nested dict), because you cannot put &lt;code&gt;allow_unknown&lt;/code&gt; inside the defination of schema. You have …&lt;/p&gt;</summary><content type="html">&lt;p&gt;rules_set_registry: only stores schema itself, for example &lt;code&gt;{'type': 'string', 'required': True}&lt;/code&gt;&lt;br&gt;
 schema_registry: stores complete schema, for example &lt;code&gt;{'name': {'type': 'string', 'required': True}}&lt;/code&gt;, it can be used directly.  &lt;/p&gt;
 &lt;p&gt;It's not easy to &lt;code&gt;allow_unknown&lt;/code&gt; for parent schema (for nested dict), because you cannot put &lt;code&gt;allow_unknown&lt;/code&gt; inside the defination of schema. You have to 
 change the &lt;code&gt;allow_unknown&lt;/code&gt; attribute for the instance of Validator.  &lt;/p&gt;</content></entry><entry><title>On the BeGinNing</title><link href="/on-the-beginning.html" rel="alternate"></link><published>2016-12-23T00:00:00+00:00</published><updated>2016-12-23T00:00:00+00:00</updated><author><name></name></author><id>tag:None,2016-12-23:/on-the-beginning.html</id><summary type="html">&lt;p&gt;Welcome to visit 'python-NOTes' category in LuCima's SpaCe. Here gathers several posts summerized advanced usages, tips and black techs about Python. All contents are based on Python 3.x, though Python 2.x may be referred to shortly.  &lt;/p&gt;</summary><content type="html">&lt;p&gt;Welcome to visit 'python-NOTes' category in LuCima's SpaCe. Here gathers several posts summerized advanced usages, tips and black techs about Python. All contents are based on Python 3.x, though Python 2.x may be referred to shortly.  &lt;/p&gt;</content></entry><entry><title>Operaions on Basic data structure -- dict</title><link href="/operaions-on-basic-data-structure-dict.html" rel="alternate"></link><published>2016-12-23T00:00:00+00:00</published><updated>2016-12-23T00:00:00+00:00</updated><author><name></name></author><id>tag:None,2016-12-23:/operaions-on-basic-data-structure-dict.html</id><summary type="html">&lt;h1&gt;Series of posts (2)&lt;/h1&gt;
 &lt;p&gt;If you want to build up a dict using two lists, &lt;code&gt;zip()&lt;/code&gt; can be used as this:&lt;br&gt;
-&lt;code&gt;dict(zip(list_a, list_b))&lt;/code&gt;&lt;/p&gt;</summary><content type="html">&lt;h1&gt;Series of posts (2)&lt;/h1&gt;
+&lt;code&gt;dict(zip(list_a, list_b))&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Sometimes, &lt;code&gt;OrderedDict&lt;/code&gt; and &lt;code&gt;DefaultDict&lt;/code&gt; in module &lt;code&gt;collections&lt;/code&gt; can be useful. When you need a dict whose keys are &lt;/p&gt;</summary><content type="html">&lt;h1&gt;Series of posts (2)&lt;/h1&gt;
 &lt;p&gt;If you want to build up a dict using two lists, &lt;code&gt;zip()&lt;/code&gt; can be used as this:&lt;br&gt;
-&lt;code&gt;dict(zip(list_a, list_b))&lt;/code&gt;&lt;/p&gt;</content></entry><entry><title>Operaions on Basic data structure -- list</title><link href="/operaions-on-basic-data-structure-list.html" rel="alternate"></link><published>2016-12-23T00:00:00+00:00</published><updated>2016-12-23T00:00:00+00:00</updated><author><name></name></author><id>tag:None,2016-12-23:/operaions-on-basic-data-structure-list.html</id><summary type="html">&lt;h1&gt;Series of posts (1)&lt;/h1&gt;
-&lt;p&gt;Here I am going to summarize some advancing operations about list, which is one of the most commonly used data structure in Python. Basic usage of list will be skipped.  &lt;/p&gt;</summary><content type="html">&lt;h1&gt;Series of posts (1)&lt;/h1&gt;
-&lt;p&gt;Here I am going to summarize some advancing operations about list, which is one of the most commonly used data structure in Python. Basic usage of list will be skipped.  &lt;/p&gt;</content></entry><entry><title>Operations on FILE and PATH</title><link href="/operations-on-file-and-path.html" rel="alternate"></link><published>2016-12-21T00:00:00+00:00</published><updated>2016-12-21T00:00:00+00:00</updated><author><name></name></author><id>tag:None,2016-12-21:/operations-on-file-and-path.html</id><summary type="html">&lt;p&gt;This post is going to introduce Python's' operations upon files and paths in OS. The most commonly used modules are &lt;code&gt;os&lt;/code&gt; and &lt;code&gt;shutil&lt;/code&gt;.&lt;/p&gt;</summary><content type="html">&lt;p&gt;This post is going to introduce Python's' operations upon files and paths in OS. The most commonly used modules are &lt;code&gt;os&lt;/code&gt; and &lt;code&gt;shutil&lt;/code&gt;.&lt;/p&gt;</content></entry><entry><title>How to implement User Datagram Protocol with Python RAW socket</title><link href="/how-to-implement-user-datagram-protocol-with-python-raw-socket.html" rel="alternate"></link><published>2016-12-20T00:00:00+00:00</published><updated>2016-12-20T00:00:00+00:00</updated><author><name></name></author><id>tag:None,2016-12-20:/how-to-implement-user-datagram-protocol-with-python-raw-socket.html</id><summary type="html">&lt;p&gt;one’s complement in UDP  &lt;/p&gt;
+&lt;code&gt;dict(zip(list_a, list_b))&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Sometimes, &lt;code&gt;OrderedDict&lt;/code&gt; and &lt;code&gt;DefaultDict&lt;/code&gt; in module &lt;code&gt;collections&lt;/code&gt; can be useful. When you need a dict whose keys are &lt;/p&gt;</content></entry><entry><title>Operaions on Basic data structure -- list</title><link href="/operaions-on-basic-data-structure-list.html" rel="alternate"></link><published>2016-12-23T00:00:00+00:00</published><updated>2016-12-23T00:00:00+00:00</updated><author><name></name></author><id>tag:None,2016-12-23:/operaions-on-basic-data-structure-list.html</id><summary type="html">&lt;h1&gt;Series of posts (1)&lt;/h1&gt;
+&lt;style type="text/css"&gt;
+.keywords {
+    color:#1E90FF;    
+    font-weight:bold;
+}
+&lt;/style&gt;
+
+&lt;p&gt;Here I am going to summarize some advancing operations about &lt;span class='keywords'&gt;list&lt;/span&gt;, which is one of the most commonly used data structure in Python. Basic usage of list will be skipped.  &lt;/p&gt;
+&lt;p&gt;The built-in function &lt;code&gt;sorted()&lt;/code&gt; is helpful for sorting the &lt;span class='keywords'&gt;list&lt;/span&gt; or …&lt;/p&gt;</summary><content type="html">&lt;h1&gt;Series of posts (1)&lt;/h1&gt;
+&lt;style type="text/css"&gt;
+.keywords {
+    color:#1E90FF;    
+    font-weight:bold;
+}
+&lt;/style&gt;
+
+&lt;p&gt;Here I am going to summarize some advancing operations about &lt;span class='keywords'&gt;list&lt;/span&gt;, which is one of the most commonly used data structure in Python. Basic usage of list will be skipped.  &lt;/p&gt;
+&lt;p&gt;The built-in function &lt;code&gt;sorted()&lt;/code&gt; is helpful for sorting the &lt;span class='keywords'&gt;list&lt;/span&gt; or &lt;span class='keywords'&gt;dict&lt;/span&gt;. By providing the &lt;code&gt;cmp&lt;/code&gt; and &lt;code&gt;key&lt;/code&gt; parameter, users can make a custom sorting function, e.g., &lt;/p&gt;</content></entry><entry><title>Operations on FILE and PATH</title><link href="/operations-on-file-and-path.html" rel="alternate"></link><published>2016-12-21T00:00:00+00:00</published><updated>2016-12-21T00:00:00+00:00</updated><author><name></name></author><id>tag:None,2016-12-21:/operations-on-file-and-path.html</id><summary type="html">&lt;p&gt;This post is going to introduce Python's' operations upon files and paths in OS. The most commonly used modules are &lt;code&gt;os.path&lt;/code&gt; and &lt;code&gt;shutil&lt;/code&gt;.&lt;/p&gt;</summary><content type="html">&lt;p&gt;This post is going to introduce Python's' operations upon files and paths in OS. The most commonly used modules are &lt;code&gt;os.path&lt;/code&gt; and &lt;code&gt;shutil&lt;/code&gt;.&lt;/p&gt;</content></entry><entry><title>How to implement User Datagram Protocol with Python RAW socket</title><link href="/how-to-implement-user-datagram-protocol-with-python-raw-socket.html" rel="alternate"></link><published>2016-12-20T00:00:00+00:00</published><updated>2016-12-20T00:00:00+00:00</updated><author><name></name></author><id>tag:None,2016-12-20:/how-to-implement-user-datagram-protocol-with-python-raw-socket.html</id><summary type="html">&lt;p&gt;one’s complement in UDP  &lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Construct the UDP header and UDP Pseudo header, as illustrated below, where Checksum is set zero at first.  &lt;/li&gt;
 &lt;li&gt;Check the length of data, if it is an odd length of bytes, supplement a byte of zero (0x00) at the end of the data when counting …&lt;/li&gt;&lt;/ol&gt;</summary><content type="html">&lt;p&gt;one’s complement in UDP  &lt;/p&gt;

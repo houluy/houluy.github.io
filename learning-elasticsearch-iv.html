@@ -45,8 +45,8 @@
 <h2>mapping</h2>
 <p>在<a href="https://houluy.github.io/learning-elasticsearch-iii.html">上一部分</a>遗留的问题2，通过<code>match</code>搜索<code>a</code>字段值为<code>ban</code>的文档，结果<code>banner</code>等值也会返回。其中一个原因在于<code>match</code>使用模糊全文搜索机制，所有包含<code>ban</code>的字段都可能被搜索到。<br>
 Elasticsearch的搜索机制可以分为如下几类：<br>
-1. 结构化搜索
-2. 全文搜索</p>
+1. 结构化搜索<br>
+2. 全文搜索  </p>
 <h3>terminate_after</h3>
 <p>有时候，我们并不想获得结果，而仅仅是确认我们想搜索的内容是否存在。这时，我们可以指定参数<code>size=0</code>以及<code>terminate_after=True</code>来让结果中<strong>不包含</strong>内容体，只包含元信息。通过返回结果中的<code>total</code>字段，可以判断搜索内容是否存在。</p>
     </div><!-- /.entry-content -->

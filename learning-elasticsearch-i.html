@@ -42,8 +42,9 @@
 <p>In <a href="https://houluy.github.io/category/elasticsearch.html">Elasticsearch</a>.</p>
 <p>tags: <a href="https://houluy.github.io/tag/elasticsearch.html">Elasticsearch</a> </p>
 </footer><!-- /.post-info -->      <p>本文以Elasticsearch的Python（人生苦短）客户端为例，一起来感受Elasticsearch（Python）的强大之处。<br>
-推荐Python版本：3.5</p>
-<p>官方文档：<a href="https://elasticsearch-py.readthedocs.io/en/master/">https://elasticsearch-py.readthedocs.io/en/master/</a></p>
+推荐Python版本：3.6</p>
+<p>官方文档：<a href="https://elasticsearch-py.readthedocs.io/en/master/">https://elasticsearch-py.readthedocs.io/en/master/</a>
+请移步<a href="https://github.com/houluy/notebook-for-blog">这里</a>查看本文代码示例</p>
 <h2>Elasticsearch Python Client安装</h2>
 <div class="highlight"><pre><span></span>pip install elasticsearch
 </pre></div>
@@ -53,9 +54,9 @@
 <p>Elasticsearch内置多种类型分词器，但均不支持中文。因而本文选取ik分词器做为中文分词工具
 ik-analyzer: <a href="https://github.com/medcl/elasticsearch-analysis-ik">https://github.com/medcl/elasticsearch-analysis-ik</a></p>
 <h2>Client类</h2>
-<p>想要使用elasticsearch面向document的各个接口，需要先构建一个<code>Elastic</code>实例：</p>
+<p>想要使用elasticsearch面向document的各个接口，需要先构建一个<code>Elasticsearch</code>实例：</p>
 <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">elasticsearch</span>
-<span class="n">es</span> <span class="o">=</span> <span class="n">elasticsearch</span><span class="o">.</span><span class="n">Elastic</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">xxx</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">9200</span><span class="p">)</span>
+<span class="n">es</span> <span class="o">=</span> <span class="n">elasticsearch</span><span class="o">.</span><span class="n">Elasticsearch</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">xxx</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">9200</span><span class="p">)</span>
 </pre></div>
 
 
